@@ -227,7 +227,7 @@
         
         // Update the card content
         messageEl.textContent = `Dear ${friendName}, ${customMessage}`;
-        fromEl.textContent = `With love, ${yourName}`;
+        fromEl.textContent = `Beste Grüße, ${yourName}`;
         
         // Create confetti effect
         function createConfetti() {
@@ -289,11 +289,11 @@
             // Balloon click event
             balloon.addEventListener('click', function() {
                 if (!gameActive) return;
-                
-                createExplosion(leftPos + 25, position + 35);
-                // Remove elements after animation
+                // create an explosion visual and keep a reference so we can remove it
+                const pop = createExplosion(leftPos + 25, position + 35);
+                // Remove explosion element after animation (safely)
                 setTimeout(() => {
-                    pop.remove();
+                    if (pop && pop.remove) pop.remove();
                 }, 500);
                 
                 // Increase score
@@ -307,6 +307,18 @@
                 // Create some confetti for fun
                 createConfetti();
             });
+        }
+
+        // Create a small explosion / pop element at (x, y) relative to gameArea
+        function createExplosion(x, y) {
+            const pop = document.createElement('div');
+            pop.className = 'balloon-pop';
+            // position relative to gameArea
+            pop.style.left = x + 'px';
+            pop.style.bottom = y + 'px';
+            pop.textContent = '💥';
+            gameArea.appendChild(pop);
+            return pop;
         }
         
         // Start the game
