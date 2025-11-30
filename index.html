@@ -190,28 +190,28 @@
         </div>
         
         <div class="game-section">
-            <div class="game-title">Balloon Pop Game!</div>
-            <div class="game-instructions">Pop as many balloons as you can in 30 seconds!</div>
-            <div class="score-display">Score: <span id="score">0</span> | Time: <span id="time">30</span>s</div>
+            <div class="game-title">Bomben hochgehen lassen!</div>
+            <div class="game-instructions">Lass so viele Bomben wie möglich hochgehen!</div>
+            <div class="score-display">Score: <span id="score">0</span> | Time: <span id="time">60</span>s</div>
             <div class="game-area" id="gameArea"></div>
             <button class="game-button" id="startButton">Start Game</button>
             <button class="game-button" id="resetButton">Reset Game</button>
         </div>
         
         <div class="from" id="from">
-            From your friend
+            Von Leon
         </div>
     </div>
 
     <script>
         // Customizable variables
-        const friendName = "My Awesome Friend";
-        const yourName = "Your Best Friend";
-        const customMessage = "Wishing you the most amazing day filled with joy, laughter, and all the things you love the most!";
+        const friendName = "Stella";
+        const yourName = "Leon";
+        const customMessage = "Alles Gute zum 16. Geburtstag, bisschen kurzfristig, aber ich hoffe du hast Spaß damit!";
         
         // Game variables
         let score = 0;
-        let timeLeft = 30;
+        let timeLeft = 60;
         let gameActive = false;
         let gameTimer;
         let balloonInterval;
@@ -290,15 +290,7 @@
             balloon.addEventListener('click', function() {
                 if (!gameActive) return;
                 
-                // Create pop effect
-                const pop = document.createElement('div');
-                pop.className = 'balloon-pop';
-                pop.textContent = 'POP!';
-                pop.style.color = balloon.style.background;
-                pop.style.left = (leftPos + 20) + 'px';
-                pop.style.top = (position + 20) + 'px';
-                gameArea.appendChild(pop);
-                
+                createExplosion(leftPos + 25, position + 35);
                 // Remove elements after animation
                 setTimeout(() => {
                     pop.remove();
@@ -323,7 +315,7 @@
             
             gameActive = true;
             score = 0;
-            timeLeft = 30;
+            timeLeft = 6;
             scoreEl.textContent = score;
             timeEl.textContent = timeLeft;
             
