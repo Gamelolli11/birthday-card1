@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            padding: 20px;
+        }
+        
+        .birthday-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .card-header {
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: #e91e63;
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 0px #ffc8dd;
+        }
+        
+        .birthday-message {
+            font-size: 1.3em;
+            line-height: 1.6;
+            color: #333;
+            margin-bottom: 25px;
+            padding: 0 10px;
+        }
+        
+        .game-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 25px 0;
+            border: 2px dashed #e91e63;
+        }
+        
+        .game-title {
+            color: #e91e63;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+        
+        .game-instructions {
+            font-size: 1em;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .game-area {
+            height: 200px;
+            background: #fff;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid #ffc8dd;
+            margin-bottom: 15px;
+        }
+        
+        .balloon {
+            position: absolute;
+            width: 40px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .balloon::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 15px;
+            background: #333;
+        }
+        
+        .score-display {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #e91e63;
+            margin-bottom: 10px;
+        }
+        
+        .game-button {
+            background: #e91e63;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+            margin: 5px;
+        }
+        
+        .game-button:hover {
+            background: #c2185b;
+            transform: scale(1.05);
+        }
+        
+        .from {
+            font-style: italic;
+            color: #666;
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+        
+        .decoration {
+            position: absolute;
+            z-index: -1;
+        }
+        
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            opacity: 0.7;
+            animation: confetti-fall 5s linear infinite;
+        }
+        
+        @keyframes confetti-fall {
+            0% { transform: translateY(-100px) rotate(0deg); }
+            100% { transform: translateY(100vh) rotate(360deg); }
+        }
+        
+        .balloon-pop {
+            position: absolute;
+            font-size: 24px;
+            animation: pop-animation 0.5s forwards;
+        }
+        
+        @keyframes pop-animation {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(3); opacity: 0; }
+        }
+        
+        @media (max-width: 500px) {
+            .birthday-card {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2.2em;
+            }
+            
+            .birthday-message {
+                font-size: 1.1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="birthday-card">
+        <div class="card-header">
+            <h1>Happy Birthday!</h1>
+            <div class="birthday-message" id="message">
+                Wishing you the most amazing day filled with joy, laughter, and all the things you love the most!
+            </div>
+        </div>
+        
+        <div class="game-section">
+            <div class="game-title">Balloon Pop Game!</div>
+            <div class="game-instructions">Pop as many balloons as you can in 30 seconds!</div>
+            <div class="score-display">Score: <span id="score">0</span> | Time: <span id="time">30</span>s</div>
+            <div class="game-area" id="gameArea"></div>
+            <button class="game-button" id="startButton">Start Game</button>
+            <button class="game-button" id="resetButton">Reset Game</button>
+        </div>
+        
+        <div class="from" id="from">
+            From your friend
+        </div>
+    </div>
+
+    <script>
+        // Customizable variables
+        const friendName = "My Awesome Friend";
+        const yourName = "Your Best Friend";
+        const customMessage = "Wishing you the most amazing day filled with joy, laughter, and all the things you love the most!";
+        
+        // Game variables
+        let score = 0;
+        let timeLeft = 30;
+        let gameActive = false;
+        let gameTimer;
+        let balloonInterval;
+        
+        // DOM elements
+        const messageEl = document.getElementById('message');
+        const fromEl = document.getElementById('from');
+        const gameArea = document.getElementById('gameArea');
+        const scoreEl = document.getElementById('score');
+        const timeEl = document.getElementById('time');
+        const startButton = document.getElementById('startButton');
+        const resetButton = document.getElementById('resetButton');
+        
+        // Update the card content
+        messageEl.textContent = `Dear ${friendName}, ${customMessage}`;
+        fromEl.textContent = `With love, ${yourName}`;
+        
+        // Create confetti effect
+        function createConfetti() {
+            const colors = ['#e91e63', '#2196f3', '#4caf50', '#ffeb3b', '#9c27b0', '#ff9800'];
+            for (let i = 0; i < 30; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDelay = Math.random() * 5 + 's';
+                document.body.appendChild(confetti);
+                
+                setTimeout(() => {
+                    confetti.remove();
+                }, 5000);
+            }
+        }
+        
+        // Create a balloon
+        function createBalloon() {
+            if (!gameActive) return;
+            
+            const balloon = document.createElement('div');
+            balloon.className = 'balloon';
+            
+            // Random position
+            const leftPos = Math.random() * (gameArea.offsetWidth - 40);
+            balloon.style.left = leftPos + 'px';
+            balloon.style.bottom = '-60px';
+            
+            // Random color
+            const colors = ['#e91e63', '#2196f3', '#4caf50', '#ffeb3b', '#9c27b0', '#ff9800'];
+            balloon.style.background = colors[Math.floor(Math.random() * colors.length)];
+            
+            // Add to game area
+            gameArea.appendChild(balloon);
+            
+            // Animate balloon rising
+            const riseSpeed = 1 + Math.random() * 2;
+            let position = -60;
+            
+            const riseInterval = setInterval(() => {
+                if (!gameActive) {
+                    clearInterval(riseInterval);
+                    balloon.remove();
+                    return;
+                }
+                
+                position += riseSpeed;
+                balloon.style.bottom = position + 'px';
+                
+                // Remove balloon if it goes above the game area
+                if (position > gameArea.offsetHeight) {
+                    clearInterval(riseInterval);
+                    balloon.remove();
+                }
+            }, 20);
+            
+            // Balloon click event
+            balloon.addEventListener('click', function() {
+                if (!gameActive) return;
+                
+                // Create pop effect
+                const pop = document.createElement('div');
+                pop.className = 'balloon-pop';
+                pop.textContent = 'POP!';
+                pop.style.color = balloon.style.background;
+                pop.style.left = (leftPos + 20) + 'px';
+                pop.style.top = (position + 20) + 'px';
+                gameArea.appendChild(pop);
+                
+                // Remove elements after animation
+                setTimeout(() => {
+                    pop.remove();
+                }, 500);
+                
+                // Increase score
+                score++;
+                scoreEl.textContent = score;
+                
+                // Remove balloon
+                clearInterval(riseInterval);
+                balloon.remove();
+                
+                // Create some confetti for fun
+                createConfetti();
+            });
+        }
+        
+        // Start the game
+        function startGame() {
+            if (gameActive) return;
+            
+            gameActive = true;
+            score = 0;
+            timeLeft = 30;
+            scoreEl.textContent = score;
+            timeEl.textContent = timeLeft;
+            
+            // Clear any existing balloons
+            gameArea.innerHTML = '';
+            
+            // Start game timer
+            gameTimer = setInterval(() => {
+                timeLeft--;
+                timeEl.textContent = timeLeft;
+                
+                if (timeLeft <= 0) {
+                    endGame();
+                }
+            }, 1000);
+            
+            // Create balloons at intervals
+            balloonInterval = setInterval(createBalloon, 800);
+            
+            // Change button text
+            startButton.textContent = 'Game Running...';
+            startButton.disabled = true;
+        }
+        
+        // End the game
+        function endGame() {
+            gameActive = false;
+            clearInterval(gameTimer);
+            clearInterval(balloonInterval);
+            
+            // Show final score
+            const finalMessage = document.createElement('div');
+            finalMessage.style.fontSize = '1.2em';
+            finalMessage.style.fontWeight = 'bold';
+            finalMessage.style.color = '#e91e63';
+            finalMessage.style.marginTop = '10px';
+            finalMessage.textContent = `Game Over! Final Score: ${score}`;
+            gameArea.appendChild(finalMessage);
+            
+            // Reset button
+            startButton.textContent = 'Start Game';
+            startButton.disabled = false;
+            
+            // Create celebration confetti
+            for (let i = 0; i < 5; i++) {
+                setTimeout(createConfetti, i * 300);
+            }
+        }
+        
+        // Reset the game
+        function resetGame() {
+            gameActive = false;
+            clearInterval(gameTimer);
+            clearInterval(balloonInterval);
+            
+            score = 0;
+            timeLeft = 30;
+            scoreEl.textContent = score;
+            timeEl.textContent = timeLeft;
+            
+            gameArea.innerHTML = '';
+            
+            startButton.textContent = 'Start Game';
+            startButton.disabled = false;
+        }
+        
+        // Event listeners
+        startButton.addEventListener('click', startGame);
+        resetButton.addEventListener('click', resetGame);
+        
+        // Create initial confetti
+        createConfetti();
+        setInterval(createConfetti, 10000);
+        
+        // Add click effect to the card
+        document.addEventListener('click', function(e) {
+            if (!e.target.classList.contains('game-button') && 
+                !e.target.classList.contains('balloon')) {
+                createConfetti();
+            }
+        });
+    </script>
+</body>
+</html>
