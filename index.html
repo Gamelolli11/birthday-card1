@@ -183,9 +183,9 @@
 <body>
     <div class="birthday-card">
         <div class="card-header">
-            <h1>Alles gute zum Geburtstag!</h1>
+            <h1>Alles Gute zum Geburtstag!</h1>
             <div class="birthday-message" id="message">
-                Ich wünsche dir einen Guten Tag.
+                Ich wünsch dir einen schönen Tag, lass keine Bomben hochgehen!
             </div>
         </div>
         
@@ -315,7 +315,7 @@
             
             gameActive = true;
             score = 0;
-            timeLeft = 6;
+            timeLeft = 30;
             scoreEl.textContent = score;
             timeEl.textContent = timeLeft;
             
@@ -352,11 +352,11 @@
             finalMessage.style.fontWeight = 'bold';
             finalMessage.style.color = '#e91e63';
             finalMessage.style.marginTop = '10px';
-            finalMessage.textContent = `Game Over! Final Score: ${score}`;
+            finalMessage.textContent = `Spiel vorbei, so viele Bomben hast du hochgehen lassen: ${score}`;
             gameArea.appendChild(finalMessage);
             
             // Reset button
-            startButton.textContent = 'Start Game';
+            startButton.textContent = 'Spiel starten';
             startButton.disabled = false;
             
             // Create celebration confetti
@@ -378,7 +378,7 @@
             
             gameArea.innerHTML = '';
             
-            startButton.textContent = 'Start Game';
+            startButton.textContent = 'Spiel starten';
             startButton.disabled = false;
         }
         
@@ -400,4 +400,3 @@
     </script>
 </body>
 </html>
-
